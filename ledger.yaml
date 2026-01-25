@@ -1,0 +1,7 @@
+categories:
+  - name: "ifood"
+    key: "ifd"
+  - name: "uber"
+    key: "uber"
+  - name: "mercado"
+    key: "daki"
