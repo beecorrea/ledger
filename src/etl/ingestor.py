@@ -33,8 +33,8 @@ class Ingestor:
 
         return db.execute(
             """
-            INSERT OR IGNORE INTO spends.ledger_struct (id, tx_date, tx_amount, tx_title) 
-            SELECT id, tx_date, tx_amount, tx_title FROM df;
+                INSERT OR IGNORE INTO spends.ledger_struct (id, tx_date, tx_amount, tx_title) 
+                SELECT id, tx_date, tx_amount, tx_title FROM df;
             """.format(
                 self.target
             )
