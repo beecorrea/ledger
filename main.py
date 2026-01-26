@@ -1,7 +1,7 @@
-import src.structs.category as category
 import src.etl.categorizer as categorizer
 import src.etl.remainder as remainder
 import src.etl.ingestor as ingestor
+import src.structs.category as category
 import src.structs.runtime.duck as duck
 
 
@@ -32,9 +32,9 @@ def main():
         categ.export()
 
     # Calculate remainder table
-    rem = remainder.Remainder()
-    rem.persist(db, rem.query(db))
-    rem.export(db)
+    rem = remainder.Remainder(d)
+    rem.persist(rem.query())
+    rem.export()
 
 
 if __name__ == "__main__":
