@@ -9,8 +9,11 @@ def main():
     d = duck.DuckRuntime()
     db = d.conn
 
+    # Setup ingestion table
     ing = ingestor.Ingestor("2026-01")
-    ing.ingest_csv(db)
+    ing.table_raw_ledger(db)
+    txs = ing.query(db)
+    ing.persist(db, txs)
 
     # For each category in the ledger:
     for cat in category.build_categories():
