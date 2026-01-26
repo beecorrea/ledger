@@ -8,7 +8,7 @@ class Categorizer:
         self.category = category
 
     def query(self, db):
-        statement = "SELECT * FROM spends.ledger_raw WHERE LOWER(tx_title) LIKE '{}%' ORDER BY tx_amount DESC".format(
+        statement = "SELECT * FROM spends.ledger_struct WHERE LOWER(tx_title) LIKE '{}%' ORDER BY tx_amount DESC".format(
             self.category.prefix
         )
 

@@ -9,7 +9,7 @@ class Ingestor:
 
     def table_raw_ledger(self, db):
         stmt = """
-            CREATE TABLE IF NOT EXISTS spends.ledger_raw (
+            CREATE TABLE IF NOT EXISTS spends.ledger_struct (
                 id UBIGINT PRIMARY KEY,
                 tx_date DATE,
                 tx_amount DOUBLE,
@@ -33,7 +33,7 @@ class Ingestor:
 
         return db.execute(
             """
-            INSERT OR IGNORE INTO spends.ledger_raw (id, tx_date, tx_amount, tx_title) 
+            INSERT OR IGNORE INTO spends.ledger_struct (id, tx_date, tx_amount, tx_title) 
             SELECT id, tx_date, tx_amount, tx_title FROM df;
             """.format(
                 self.target

@@ -9,7 +9,7 @@ class Remainder:
     def query(self, db):
         statement = """
             SELECT * 
-            FROM spends.ledger_raw 
+            FROM spends.ledger_struct 
             WHERE id NOT IN (
                 SELECT DISTINCT id FROM spends.categories WHERE tx_category != ''
             ) AND tx_amount > 0 
