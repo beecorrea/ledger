@@ -2,18 +2,18 @@ import src.models.category as category
 import src.etl.categorizer as categorizer
 import src.etl.remainder as remainder
 import src.etl.ingestor as ingestor
-import src.runtime.duck as duck
+import src.structs.runtime.duck as duck
 
 
 def main():
     d = duck.DuckRuntime()
-    db = d.conn
+    db = d.context
 
     # Setup ingestion table
-    ing = ingestor.Ingestor("2026-01")
-    ing.table_raw_ledger(db)
-    txs = ing.query(db)
-    ing.persist(db, txs)
+    ing = ingestor.Ingestor(d, "2026-01")
+    db = ing.create_table()
+    txs = ing.query()
+    db = ing.persist(txs)
 
     # For each category in the ledger:
     for cat in category.build_categories():
@@ -31,6 +31,7 @@ def main():
         # Export to csv
         categ.export(db)
 
+    # Calculate remainder table
     rem = remainder.Remainder()
     rem.persist(db, rem.query(db))
     rem.export(db)

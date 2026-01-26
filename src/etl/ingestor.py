@@ -1,13 +1,13 @@
+from src.structs.model import Model
 import polars as pl
-from datetime import datetime
 
 
-class Ingestor:
-    def __init__(self, target) -> None:
-        # Target file to be ingested.
+class Ingestor(Model):
+    def __init__(self, rt, target) -> None:
+        super().__init__(kind="ingestor", rt=rt)
         self.target = target
 
-    def table_raw_ledger(self, db):
+    def create_table(self):
         stmt = """
             CREATE TABLE IF NOT EXISTS spends.ledger_struct (
                 id UBIGINT PRIMARY KEY,
@@ -17,25 +17,25 @@ class Ingestor:
             );
         """
 
-        return db.execute(stmt)
+        return self.rt.context.execute(stmt)
 
-    def query(self, db):
+    def read(self) -> str:
         resolved = "{}/{}.csv".format("data", self.target)
         stmt = "SELECT * FROM read_csv('{}');".format(resolved)
-        return db.execute(stmt).pl()
 
-    def persist(self, db, df: pl.DataFrame):
+        return stmt
+
+    def write(self) -> str:
+        return """
+            INSERT OR IGNORE INTO spends.ledger_struct (id, tx_date, tx_amount, tx_title) 
+            SELECT id, tx_date, tx_amount, tx_title FROM df;
+        """
+
+    def transform(self, df: pl.DataFrame) -> pl.DataFrame:
         df = df.with_columns(
             pl.concat_str(["amount", "date", "title"]).hash().alias("id")
         )
 
         df = df.rename({"amount": "tx_amount", "date": "tx_date", "title": "tx_title"})
 
-        return db.execute(
-            """
-                INSERT OR IGNORE INTO spends.ledger_struct (id, tx_date, tx_amount, tx_title) 
-                SELECT id, tx_date, tx_amount, tx_title FROM df;
-            """.format(
-                self.target
-            )
-        )
+        return df
