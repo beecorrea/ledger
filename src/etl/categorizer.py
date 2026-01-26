@@ -8,7 +8,7 @@ class Categorizer:
         self.category = category
 
     def query(self, db):
-        statement = "SELECT * FROM root WHERE LOWER(title) LIKE '{}%' ORDER BY amount DESC".format(
+        statement = "SELECT * FROM spends.ledger_raw WHERE LOWER(tx_title) LIKE '{}%' ORDER BY tx_amount DESC".format(
             self.category.prefix
         )
 
@@ -17,15 +17,21 @@ class Categorizer:
                 statement,
             )
             .pl()
-            .with_columns(pl.lit(self.category.name).alias("category"))
+            .with_columns(pl.lit(self.category.name).alias("tx_category"))
         )
 
     def persist(self, db, df):
         return db.execute(
             """
-            MERGE INTO categorized
+            MERGE INTO spends.categories
                 USING (SELECT * FROM df) as new
-                USING (date, title, amount, category)
+                USING (
+                    id,
+                    tx_date,
+                    tx_amount,
+                    tx_title,
+                    tx_category
+                )
                 WHEN MATCHED THEN UPDATE
                 WHEN NOT MATCHED THEN INSERT;
             """
@@ -33,7 +39,11 @@ class Categorizer:
 
     def export(self, db: duckdb.DuckDBPyConnection):
         df = db.execute(
-            "SELECT * FROM categorized WHERE category = ? and LOWER(title) LIKE '{}%'".format(
+            """
+                SELECT * 
+                FROM spends.categories 
+                WHERE tx_category = ? AND LOWER(tx_title) LIKE '{}%';
+            """.format(
                 self.category.prefix
             ),
             [self.category.name],
@@ -43,5 +53,13 @@ class Categorizer:
 
     def create_table(self, db):
         return db.sql(
-            "CREATE TABLE IF NOT EXISTS categorized (date date, title varchar, amount double, category varchar);"
+            """
+                CREATE TABLE IF NOT EXISTS spends.categories (
+                    id UBIGINT PRIMARY KEY,
+                    tx_date DATE,
+                    tx_amount DOUBLE,
+                    tx_title VARCHAR,
+                    tx_category VARCHAR
+                );
+            """
         )

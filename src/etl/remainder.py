@@ -7,29 +7,44 @@ class Remainder:
         pass
 
     def query(self, db):
-        statement = "select * from root where title not in (select title from categorized where category != '') and amount > 0 order by amount desc, title asc"
+        statement = """
+            SELECT * 
+            FROM spends.ledger_raw 
+            WHERE id NOT IN (
+                SELECT DISTINCT id FROM spends.categories WHERE tx_category != ''
+            ) AND tx_amount > 0 
+            ORDER BY 
+                tx_amount DESC,
+                tx_title ASC;
+        """
 
         df = (
             db.execute(
                 statement,
             )
             .pl()
-            .with_columns(pl.lit("").alias("category"))
+            .with_columns(pl.lit("").alias("tx_category"))
         )
         return df
 
     def persist(self, db, df):
         return db.execute(
             """
-            MERGE INTO categorized
+            MERGE INTO spends.categories
                 USING (SELECT * FROM df)
-                USING (date, title, amount, category)
+                USING (
+                    id,
+                    tx_date,
+                    tx_amount,
+                    tx_title,
+                    tx_category
+                )
                 WHEN MATCHED THEN UPDATE
                 WHEN NOT MATCHED THEN INSERT;
             """
         )
 
     def export(self, db: duckdb.DuckDBPyConnection):
-        df = db.execute("SELECT * FROM categorized WHERE category = ''").pl()
+        df = db.execute("SELECT * FROM spends.categories WHERE tx_category = ''").pl()
 
         return df.write_csv("data/others.csv")
