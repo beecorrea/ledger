@@ -9,7 +9,7 @@ class Ingestor(Model):
 
     def create_table(self):
         return """
-            CREATE TABLE IF NOT EXISTS spends.ledger_struct (
+            CREATE TABLE IF NOT EXISTS ledger_struct (
                 id UBIGINT PRIMARY KEY,
                 tx_date DATE,
                 tx_amount DOUBLE,
@@ -25,7 +25,7 @@ class Ingestor(Model):
 
     def write(self) -> str:
         return """
-            INSERT OR IGNORE INTO spends.ledger_struct (id, tx_date, tx_amount, tx_title) 
+            INSERT OR IGNORE INTO ledger_struct (id, tx_date, tx_amount, tx_title) 
             SELECT id, tx_date, tx_amount, tx_title FROM df;
         """
 

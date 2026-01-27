@@ -9,9 +9,9 @@ class Remainder(Model):
     def read(self):
         return """
             SELECT * 
-            FROM spends.ledger_struct 
+            FROM ledger_struct 
             WHERE id NOT IN (
-                SELECT DISTINCT id FROM spends.categories WHERE tx_category != ''
+                SELECT DISTINCT id FROM categories WHERE tx_category != ''
             ) AND tx_amount > 0 
             ORDER BY 
                 tx_amount DESC,
@@ -25,7 +25,7 @@ class Remainder(Model):
 
     def write(self) -> str:
         return """
-            INSERT OR IGNORE INTO spends.categories (id, tx_date, tx_amount, tx_title, tx_category) 
+            INSERT OR IGNORE INTO categories (id, tx_date, tx_amount, tx_title, tx_category) 
             SELECT id, tx_date, tx_amount, tx_title, tx_category FROM df;
         """
 
@@ -33,7 +33,7 @@ class Remainder(Model):
         return """
             COPY (
                 SELECT * 
-                FROM spends.categories 
+                FROM categories 
                 WHERE tx_category = ''
             ) TO 'data/others.csv' (HEADER, DELIMITER ',');
         """

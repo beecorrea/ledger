@@ -11,7 +11,7 @@ class Categorizer(Model):
 
     def create_table(self):
         return """
-                CREATE TABLE IF NOT EXISTS spends.categories (
+                CREATE TABLE IF NOT EXISTS categories (
                     id UBIGINT PRIMARY KEY,
                     tx_date DATE,
                     tx_amount DOUBLE,
@@ -21,7 +21,7 @@ class Categorizer(Model):
             """
 
     def read(self) -> str:
-        stmt = "SELECT * FROM spends.ledger_struct WHERE LOWER(tx_title) LIKE '{}%' ORDER BY tx_amount DESC".format(
+        stmt = "SELECT * FROM ledger_struct WHERE LOWER(tx_title) LIKE '{}%' ORDER BY tx_amount DESC".format(
             self.category.prefix
         )
 
@@ -29,7 +29,7 @@ class Categorizer(Model):
 
     def write(self) -> str:
         return """
-            INSERT OR REPLACE INTO spends.categories (id, tx_date, tx_amount, tx_title, tx_category) 
+            INSERT OR REPLACE INTO categories (id, tx_date, tx_amount, tx_title, tx_category) 
             SELECT id, tx_date, tx_amount, tx_title, tx_category FROM df;
         """
 
@@ -42,7 +42,7 @@ class Categorizer(Model):
         return """
                 COPY (
                     SELECT * 
-                    FROM spends.categories 
+                    FROM categories 
                     WHERE tx_category = '{}' AND LOWER(tx_title) LIKE '{}%'
                 ) TO 'data/{}__{}.csv' (HEADER, DELIMITER ',');
                 
