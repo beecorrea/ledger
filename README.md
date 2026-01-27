@@ -10,12 +10,13 @@
 * Building reports and dashboards of your spends.
 
 # Running
-Please check the [Setup](#setup) section to properly configure your **Ledger** instance
+Please check the [setup](#setup) section to properly configure your **Ledger** instance.
 ```
-uv install
+uv sync
 
 uv run main.py
 ```
+
 # Setup
 Ledger uses a YAML [configuration file](ledger.example.yaml) to setup the required initial parameters. You can swap the values there to configure Ledger as desired.
 
