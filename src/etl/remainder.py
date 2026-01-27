@@ -1,12 +1,10 @@
 import polars as pl
-
 from src.structs.model import Model
-from src.structs.runtime.duck import DuckRuntime
 
 
 class Remainder(Model):
-    def __init__(self, rt: DuckRuntime) -> None:
-        super().__init__(kind="remainder", rt=rt)
+    def __init__(self) -> None:
+        super().__init__(kind="remainder")
 
     def read(self):
         return """
@@ -32,8 +30,10 @@ class Remainder(Model):
         """
 
     def export(self):
-        df = self.rt.context.execute(
-            "SELECT * FROM spends.categories WHERE tx_category = ''"
-        ).pl()
-
-        return df.write_csv("data/others.csv")
+        return """
+            COPY (
+                SELECT * 
+                FROM spends.categories 
+                WHERE tx_category = ''
+            ) TO 'data/others.csv' (HEADER, DELIMITER ',');
+        """

@@ -3,12 +3,12 @@ import polars as pl
 
 
 class Ingestor(Model):
-    def __init__(self, rt, target) -> None:
-        super().__init__(kind="ingestor", rt=rt)
+    def __init__(self, target) -> None:
+        super().__init__(kind="ingestor")
         self.target = target
 
     def create_table(self):
-        stmt = """
+        return """
             CREATE TABLE IF NOT EXISTS spends.ledger_struct (
                 id UBIGINT PRIMARY KEY,
                 tx_date DATE,
@@ -16,8 +16,6 @@ class Ingestor(Model):
                 tx_title VARCHAR
             );
         """
-
-        return self.rt.context.execute(stmt)
 
     def read(self) -> str:
         resolved = "{}/{}.csv".format("data", self.target)

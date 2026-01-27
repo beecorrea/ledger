@@ -1,30 +1,11 @@
 import duckdb
 from abc import abstractmethod
 from polars import DataFrame
-from src.structs.runtime.duck import DuckRuntime
 
 
 class Model:
-    def __init__(self, rt: DuckRuntime, kind: str) -> None:
-        self.rt = rt
+    def __init__(self, kind: str) -> None:
         self.kind = kind
-
-    """
-    ########## Model Core ###########
-    Main functions used by the runtime.
-    """
-
-    def query(self) -> DataFrame:
-        q = self.read()
-        pl = self.rt.context.execute(q).pl()
-
-        return pl
-
-    def persist(self, df: DataFrame) -> duckdb.DuckDBPyConnection:
-        df = self.transform(df)
-        q = self.write()
-
-        return self.rt.context.execute(q)
 
     """
     ########## Model API ###########
@@ -34,7 +15,7 @@ class Model:
 
     @abstractmethod
     ## TODO: derive from schema
-    def create_table(self) -> duckdb.DuckDBPyConnection:
+    def create_table(self) -> str:
         pass
 
     @abstractmethod
@@ -53,6 +34,13 @@ class Model:
 
     @abstractmethod
     def transform(self, df: DataFrame) -> DataFrame:
+        """
+        Applies transformations to dataframe.
+        """
+        pass
+
+    @abstractmethod
+    def export(self) -> str:
         """
         Applies transformations to dataframe.
         """

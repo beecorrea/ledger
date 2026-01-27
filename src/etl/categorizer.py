@@ -1,17 +1,16 @@
-from src.structs.runtime.duck import DuckRuntime
 from src.structs.model import Model
 from src.structs.category import Category
 import polars as pl
 
 
 class Categorizer(Model):
-    def __init__(self, rt: DuckRuntime, category: Category) -> None:
-        super().__init__(kind="categorizer", rt=rt)
+    def __init__(self, category: Category) -> None:
+        super().__init__(kind="categorizer")
 
         self.category = category
 
     def create_table(self):
-        stmt = """
+        return """
                 CREATE TABLE IF NOT EXISTS spends.categories (
                     id UBIGINT PRIMARY KEY,
                     tx_date DATE,
@@ -20,8 +19,6 @@ class Categorizer(Model):
                     tx_category VARCHAR
                 );
             """
-
-        return self.rt.context.execute(stmt)
 
     def read(self) -> str:
         stmt = "SELECT * FROM spends.ledger_struct WHERE LOWER(tx_title) LIKE '{}%' ORDER BY tx_amount DESC".format(
@@ -32,7 +29,7 @@ class Categorizer(Model):
 
     def write(self) -> str:
         return """
-            INSERT OR IGNORE INTO spends.categories (id, tx_date, tx_amount, tx_title, tx_category) 
+            INSERT OR REPLACE INTO spends.categories (id, tx_date, tx_amount, tx_title, tx_category) 
             SELECT id, tx_date, tx_amount, tx_title, tx_category FROM df;
         """
 
@@ -42,16 +39,13 @@ class Categorizer(Model):
         return df
 
     def export(self):
-        stmt = """
-                SELECT * 
-                FROM spends.categories 
-                WHERE tx_category = ? AND LOWER(tx_title) LIKE '{}%';
+        return """
+                COPY (
+                    SELECT * 
+                    FROM spends.categories 
+                    WHERE tx_category = '{}%' AND LOWER(tx_title) LIKE '{}%'
+                ) TO 'data/others.csv' (HEADER, DELIMITER ',');
+                
             """.format(
-            self.category.prefix
+            self.category.prefix, self.category.name
         )
-        df = self.rt.context.execute(
-            stmt,
-            [self.category.name],
-        ).pl()
-
-        return df.write_csv("data/{}.csv".format(self.category.id()))
