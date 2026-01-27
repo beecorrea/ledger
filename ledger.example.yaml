@@ -1,4 +1,18 @@
+# DuckDB configurations.
+database:
+  name: my-database # Name of the local database file managed by DuckDB.
+
+# Ingestion configuration
+ingestion:
+  # List of CSV files that will be used as inputs.
+  targets:
+    - january
+    - february
+
+# Categories that'll be used to classify the transactions.
 categories:
+  # The 'key' property is used to prefix search match a transaction title to a category.
+  # For example, if a transaction title is 'Daki', it'll be classified as 'mercado'.
   - name: "ifood"
     key: "ifd"
   - name: "uber"
