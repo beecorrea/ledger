@@ -12,13 +12,9 @@ class Category:
         return "{}__{}".format(self.name, "-".join(self.prefix.lower().split()))
 
 
-def build_categories(file="ledger.yaml"):
+def build_categories(categories: list):
     res = []
-
-    with open(file) as f:
-        ledger = yaml.safe_load(f)
-        cats = ledger["categories"]
-        for cat in cats:
-            res.append(Category(cat["name"], cat["key"]))
+    for cat in categories:
+        res.append(Category(cat["name"], cat["key"]))
 
     return res

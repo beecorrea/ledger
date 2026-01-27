@@ -1,3 +1,4 @@
+import yaml
 import duckdb
 from src.structs.model import Model
 from polars import DataFrame
@@ -8,11 +9,12 @@ class DuckRuntime:
     Runs a Model step-by-step.
     """
 
-    def __init__(self) -> None:
-        self.context = duckdb.connect(database="spends.duckdb")
+    def __init__(self, db: str) -> None:
+        self.db_name = db
+        self.context = duckdb.connect(database="{}.duckdb".format(self.db_name))
 
     def run(self, m: Model):
-        print("running", m.kind)
+        print("* Model:", m.kind)
         ct = m.create_table()
         if ct:
             self.context.execute(ct)
