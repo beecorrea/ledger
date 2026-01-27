@@ -43,9 +43,12 @@ class Categorizer(Model):
                 COPY (
                     SELECT * 
                     FROM spends.categories 
-                    WHERE tx_category = '{}%' AND LOWER(tx_title) LIKE '{}%'
-                ) TO 'data/others.csv' (HEADER, DELIMITER ',');
+                    WHERE tx_category = '{}' AND LOWER(tx_title) LIKE '{}%'
+                ) TO 'data/{}__{}.csv' (HEADER, DELIMITER ',');
                 
             """.format(
-            self.category.prefix, self.category.name
+            self.category.name,
+            self.category.prefix,
+            self.category.name,
+            self.category.prefix,
         )
