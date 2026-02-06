@@ -1,4 +1,5 @@
 import yaml
+from loguru import logger
 
 
 class Ledger:
@@ -12,3 +13,4 @@ class Ledger:
         self.database = self.ledger["database"]
         self.ingestion = self.ledger["ingestion"]
         self.categories = self.ledger["categories"]
+        logger.info("{}", self.ledger)

@@ -8,12 +8,9 @@ import src.structs.ledger as ledger
 
 def main():
     ldg = ledger.Ledger()
-    db_name = ldg.ledger["database"]["name"]
-    d = duck.DuckRuntime(db_name)
+    d = duck.DuckRuntime(ldg.database["name"])
 
-    targets = ldg.ingestion["targets"]
-    for target in targets:
-        print("========= Processing {} =========".format(target))
+    for target in ldg.ingestion["targets"]:
         models = list()
         models.append(ingestor.Ingestor(target))
 
