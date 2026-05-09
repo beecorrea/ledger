@@ -12,3 +12,9 @@ wheels/
 data/
 *.duckdb
 ledger.yaml
+
+samples/
+.env
+
+.DS_Store
+*.sh

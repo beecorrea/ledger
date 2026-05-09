@@ -56,3 +56,6 @@ date,title,amount,category
 2025-12-28,Metrô,45.88,transportation
 2025-12-28,Vivo,70.99,
 ```
+
+# High-level design
+![](./assets/high_level_arch.png)
