@@ -1,5 +1,6 @@
 import sys, argparse
 import click
+import duckdb
 from invoice.agent import get_structured_invoice
 from invoice.pdf import pdf_extract, write_invoice
 
@@ -21,4 +22,15 @@ def convert(file: str, password: str):
     click.echo(struct_inv)
 
 
+@click.command()
+@click.argument("sql_query")
+def query(sql_query: str):
+    try:
+        result = duckdb.sql(sql_query)
+        click.echo(result)
+    except Exception as e:
+        click.echo(f"Error executing query: {e}", err=True)
+
+
 invoice.add_command(convert)
+invoice.add_command(query)
