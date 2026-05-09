@@ -3,14 +3,25 @@ name = "ledger"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
+authors = [
+    { name = "Bianca Correa", email = "me@aquabianca.dev" }
+]
 requires-python = ">=3.13"
 dependencies = [
-    "dateparser>=1.2.2",
-    "duckdb>=1.4.3",
-    "loguru>=0.7.3",
-    "numpy>=2.4.1",
-    "pandas>=2.3.3",
-    "polars>=1.37.1",
-    "pyarrow>=22.0.0",
-    "pyyaml>=6.0.3",
+    "click>=8.3.3",
+    "deepagents>=0.5.8",
+    "langchain>=1.2.18",
+    "pypdfium2>=5.8.0",
+]
+
+[project.scripts]
+ledger = "ledger:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::LangChainPendingDeprecationWarning",
 ]
