@@ -1,3 +1,5 @@
+import sys
+
 import click
 import duckdb
 from invoice.agent import get_structured_invoice
@@ -19,6 +21,7 @@ def invoice():
     default="",
 )
 def convert(file: str, password: str):
+    """Converts an invoice PDF to CSV."""
     f = file.removesuffix(".pdf")
     raw_inv = pdf_extract(f"{f}", password=password)
     struct_inv = get_structured_invoice(raw_inv)
@@ -32,9 +35,11 @@ def convert(file: str, password: str):
 @click.option("--file", required=False)
 @click.option("--param", type=(str, str), multiple=True)
 def query(query: str, file: str, param):
+    """Queries a CSV file using DuckDB."""
     # Mutual exclusive but one is required
-    # if (query != "" and file != "") or (query == "" and file == ""):
-    # click.echo("error: must use one of --query and --file")
+    if (query is not None and file is not None) or (query is None and file is None):
+        click.echo("must use one of: --query, --file.")
+        sys.exit(1)
 
     if file is not None:
         f = open(file)
