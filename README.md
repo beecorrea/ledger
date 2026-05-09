@@ -6,11 +6,10 @@ With `ledger`, you can convert invoice PDF filweas to structured data formats (e
 
 # Use Cases
 * Building the history of personal financial transactions.
+* Creating analyticial reports and dashboards of spends.
 * Managing household spends and splitting costs between members.
-* Building reports and dashboards of your spends.
 
 # Running
-Please check the [setup](#setup) section to properly configure your **Ledger** instance.
 ```
 # Install as a tool to use it from the command line:
 uv tool install -e .
