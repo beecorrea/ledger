@@ -11,9 +11,9 @@ def invoice():
 
 @click.command()
 @click.argument("file")
-@click.option("--pasword", help="password to unlock the PDF file.", default="")
-def convert(f: str, password: str):
-    f = f.removesuffix(".pdf")
+@click.option("--password", help="password to unlock the PDF file.", default="")
+def convert(file: str, password: str):
+    f = file.removesuffix(".pdf")
     raw_inv = pdf_extract(f"{f}", password=password)
     struct_inv = get_structured_invoice(raw_inv)
     write_invoice(f, struct_inv)
