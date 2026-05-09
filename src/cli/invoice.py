@@ -1,4 +1,3 @@
-import sys, argparse
 import click
 import duckdb
 from invoice.agent import get_structured_invoice
@@ -12,7 +11,13 @@ def invoice():
 
 @click.command()
 @click.argument("file")
-@click.option("--password", help="password to unlock the PDF file.", default="")
+@click.option(
+    "--password",
+    help="password to unlock the PDF file.",
+    prompt=True,
+    hide_input=True,
+    default="",
+)
 def convert(file: str, password: str):
     f = file.removesuffix(".pdf")
     raw_inv = pdf_extract(f"{f}", password=password)
@@ -23,13 +28,23 @@ def convert(file: str, password: str):
 
 
 @click.command()
-@click.argument("sql_query")
-def query(sql_query: str):
-    try:
-        result = duckdb.sql(sql_query)
-        click.echo(result)
-    except Exception as e:
-        click.echo(f"Error executing query: {e}", err=True)
+@click.option("--query", required=False)
+@click.option("--file", required=False)
+@click.option("--param", type=(str, str), multiple=True)
+def query(query: str, file: str, param):
+    # Mutual exclusive but one is required
+    # if (query != "" and file != "") or (query == "" and file == ""):
+    # click.echo("error: must use one of --query and --file")
+
+    if file is not None:
+        f = open(file)
+        query = f.read()
+        f.close()
+
+    param_dict = dict(param)
+
+    result = duckdb.sql(query, params=param_dict)
+    click.echo(result)
 
 
 invoice.add_command(convert)

@@ -11,6 +11,7 @@ dependencies = [
     "click>=8.3.3",
     "deepagents>=0.5.8",
     "duckdb>=1.1.0",
+    "jinjasql>=0.1.8",
     "langchain>=1.2.18",
     "pypdfium2>=5.8.0",
 ]
