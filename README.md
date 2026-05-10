@@ -10,7 +10,7 @@ With `ledger`, you can convert invoice PDF filweas to structured data formats (e
 * Managing household spends and splitting costs between members.
 
 # Running
-```
+```shell
 # Install as a tool to use it from the command line:
 uv tool install -e .
 
