@@ -8,10 +8,6 @@ warnings.filterwarnings(
 )
 
 import click
-
-from invoice.logic import pdf_extract, write_invoice
-from invoice.agent import get_structured_invoice
-
 from cli.invoice import invoice
 
 

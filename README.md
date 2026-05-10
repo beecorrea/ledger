@@ -14,6 +14,14 @@ With `ledger`, you can convert invoice PDF filweas to structured data formats (e
 # Install as a tool to use it from the command line:
 uv tool install -e .
 
-# Pass
-ledger invoice convert september-invoice.pdf --password s3cretp4ssw0rd
+# Convert a invoice PDF to a structured CSV file. 
+# The generated CSV file will have the same name as the PDF file.
+ledger invoice create --pdf september-invoice.pdf --password s3cretp4ssw0rd
+
+# Query an invoice using DuckDB. Good for ad-hoc querying a single invoice.
+ledger invoice query --sql "SELECT * FROM 'september-invoice.csv LIMIT 10';"
+
+# Or write the query to a file and run it. Use it when you have a complex query with parameters.
+echo "SELECT * FROM 'september-invoice.csv LIMIT $nrows';" > query.sql
+ledger invoice query --file query.sql --param nrows 10
 ```

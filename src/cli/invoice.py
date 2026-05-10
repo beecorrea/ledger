@@ -36,19 +36,19 @@ def create(pdf: str, password: str):
 
 
 @invoice.command()
-@click.option("--query", required=False)
+@click.option("--sql", required=False)
 @click.option("--file", required=False)
 @click.option("--param", type=(str, str), multiple=True)
-def query(query: str, file: str, param):
+def query(sql: str, file: str, param):
     """Queries a CSV file using DuckDB."""
     # Mutual exclusive but one is required
-    if (query is not None and file is not None) or (query is None and file is None):
-        click.echo("must use one of: --query, --file.")
+    if (sql is not None and file is not None) or (sql is None and file is None):
+        click.echo("must use one of: --sql, --file.")
         sys.exit(1)
 
     if file is not None:
         f = open(file)
-        query = f.read()
+        sql = f.read()
         f.close()
 
     result = duckdb.sql(query, params=dict(param))
